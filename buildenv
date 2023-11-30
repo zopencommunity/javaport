@@ -55,7 +55,7 @@ zz
 
 zopen_get_version()
 {
-  PATH="$ZOPEN_OLD_PATH" java -version | head -1 | awk '{print $3; }'
+  PATH="$ZOPEN_OLD_PATH" java -version 2>&1 | head -1 | awk '{print $3; }' | tr -d '"' | awk -F"_" '{print $1;}'
 }
 
 zopen_install() {
