@@ -47,7 +47,6 @@ cat <<zz
   # Add the directory of the Java path to the PATH environment variable
   JAVA_PATH="\$(dirname "\${JAVA_PROG}")"
   export PATH="\${JAVA_PATH}:\${PATH}"
-  export LIBPATH="\${JAVA_LIBPATH}:\${LIBPATH}"
 
   return 0
 zz
@@ -55,7 +54,8 @@ zz
 
 zopen_get_version()
 {
-  PATH="$ZOPEN_OLD_PATH" java -version 2>&1 | head -1 | awk '{print $3; }' | tr -d '"' | awk -F"_" '{print $1;}'
+  JAVA_PROG=$(PATH="$ZOPEN_OLD_PATH" /bin/type java | cut -f3 -d' ')
+  ${JAVA_PROG} -version 2>&1 | head -1 | awk '{print $3; }' | tr -d '"' | awk -F"_" '{print $1;}'
 }
 
 zopen_install() {
