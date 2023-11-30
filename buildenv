@@ -1,0 +1,63 @@
+# Java binary must exist, just locate it and check the version in the .env
+export ZOPEN_TYPE="BARE" 
+
+export ZOPEN_NAME="java"
+export ZOPEN_CONFIGURE=skip
+export ZOPEN_CHECK=zopen_check
+export ZOPEN_MAKE=skip
+export ZOPEN_INSTALL=zopen_install
+
+zopen_check()
+{
+  # Nothing to check at this time
+}
+
+zopen_check_results()
+{
+  # Nothing to check here, assume everything passed
+  echo "actualFailures:0"
+  echo "totalTests:1"
+  echo "expectedFailures:0"
+  echo "expectedTotalTests:1"
+}
+
+zopen_append_to_env()
+{
+cat <<zz
+  if [ -z "\$ZOPEN_IN_ZOPEN_BUILD" ]; then
+    return 0; # Do nothing
+  fi
+
+  # Find the path to Java
+  JAVA_PROG=\$(PATH="\$ZOPEN_OLD_PATH" /bin/type java | cut -f3 -d' ')
+
+  # If Java is not found, exit with an error message
+  if [ -z "\${JAVA_PROG}" ]; then
+      echo "Java not found. Please install https://www.ibm.com/support/pages/java-sdk-products-zos" >&2
+      return 1
+  fi
+
+  # Check the Java version, must be >= Java 8
+  release=\$(\$JAVA_PROG -version 2>&1 | head -1 | tr '.' ' ' | awk ' { print \$4; }')
+  if [[ \$release -lt 8 ]] ; then
+      echo "Java version is not supported. Please install Java 8 or later - https://www.ibm.com/support/pages/java-sdk-products-zos" >&2
+      return 1
+  fi
+
+  # Add the directory of the Java path to the PATH environment variable
+  JAVA_PATH="\$(dirname "\${JAVA_PROG}")"
+  export PATH="\${JAVA_PATH}:\${PATH}"
+  export LIBPATH="\${JAVA_LIBPATH}:\${LIBPATH}"
+
+  return 0
+zz
+}
+
+zopen_get_version()
+{
+  PATH="$ZOPEN_OLD_PATH" java -version | head -1 | awk '{print $3; }'
+}
+
+zopen_install() {
+  mkdir -p $ZOPEN_INSTALL_DIR
+}
