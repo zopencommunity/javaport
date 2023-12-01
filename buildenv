@@ -37,9 +37,9 @@ cat <<zz
       return 1
   fi
 
-  # Check the Java version, must be >= Java 8
-  release=\$(\$JAVA_PROG -version 2>&1 | head -1 | tr '.' ' ' | awk ' { print \$4; }')
-  if [[ \$release -lt 8 ]] ; then
+  # Check the Java version must be >= Java 8
+  release=\$(\$JAVA_PROG -version 2>&1 | head -1  | sed -e 's#.*\"\([^"]*\)".*#\1#g' | awk -F\. ' { print \$1.\$2 } ')
+  if [[ \$release -lt 18 ]] ; then
       echo "Java version is not supported. Please install Java 8 or later - https://www.ibm.com/support/pages/java-sdk-products-zos" >&2
       return 1
   fi
