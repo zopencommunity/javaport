@@ -2,6 +2,7 @@
 export ZOPEN_TYPE="BARE" 
 
 export ZOPEN_NAME="java"
+export ZOPEN_CATEGORIES="language"
 export ZOPEN_CONFIGURE=skip
 export ZOPEN_CHECK=zopen_check
 export ZOPEN_MAKE=skip
